@@ -2,10 +2,11 @@
 commands/memory.py
 
 Purpose:
-Handle all memory-related voice commands.
+Handle all memory-related commands.
 """
 
-from settings.memory_patterns import SAVE_PATTERNS, RECALL_PATTERNS
+from brain.memory_engine import process_memory
+from settings.memory_patterns import RECALL_PATTERNS
 from database.memory_db import save_memory, get_memory
 
 
@@ -17,22 +18,21 @@ def handle_memory(command):
     # SAVE MEMORY
     # ==========================
 
-    if command.startswith("remember "):
+    memory = process_memory(command)
 
-        sentence = command.replace("remember ", "", 1).strip()
+    if memory:
 
-        for pattern, (category, key) in SAVE_PATTERNS.items():
+        save_memory(
+            memory["category"],
+            memory["key"],
+            memory["value"]
+        )
 
-            if sentence.startswith(pattern):
-
-                value = sentence.replace(pattern, "", 1).strip()
-
-                save_memory(category, key, value)
-
-                return (
-                    f"I'll remember that, Boss. "
-                    f"Your {key.replace('_', ' ')} is {value}."
-                )
+        return (
+            f"I'll remember that, Boss. "
+            f"Your {memory['key'].replace('_', ' ')} "
+            f"is {memory['value']}."
+        )
 
     # ==========================
     # RECALL MEMORY
