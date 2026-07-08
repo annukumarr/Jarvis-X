@@ -1,14 +1,18 @@
 """
-config/memory_patterns.py
+settings/memory_patterns.py
 
 Purpose:
-Stores all memory patterns used by JARVIS.
+Stores all save and recall patterns used by JARVIS.
 No database code.
 No AI code.
 Only pattern definitions.
 """
 
-MEMORY_PATTERNS = {
+# ==========================
+# SAVE PATTERNS
+# ==========================
+
+SAVE_PATTERNS = {
 
     # ---------- Profile ----------
     "my name is": ("profile", "name"),
@@ -35,4 +39,37 @@ MEMORY_PATTERNS = {
     # ---------- Schedule ----------
     "i wake up at": ("schedule", "wake_time"),
     "i sleep at": ("schedule", "sleep_time"),
+}
+
+
+# ==========================
+# RECALL PATTERNS
+# ==========================
+
+RECALL_PATTERNS = {
+
+    # ---------- Profile ----------
+    "what is my name": ("profile", "name"),
+    "where do i study": ("profile", "college"),
+    "what is my college": ("profile", "college"),
+    "what is my university": ("profile", "college"),
+    "when is my birthday": ("profile", "birthday"),
+    "how old am i": ("profile", "age"),
+
+    # ---------- Goals ----------
+    "what is my dream company": ("goal", "dream_company"),
+    "what is my goal": ("goal", "goal"),
+    "what do i want to become": ("goal", "career"),
+
+    # ---------- Preferences ----------
+    "what is my favorite language": ("preference", "language"),
+    "what is my favourite language": ("preference", "language"),
+    "what is my favorite color": ("preference", "color"),
+    "what is my favourite color": ("preference", "color"),
+    "what is my favorite food": ("preference", "food"),
+    "what is my favourite food": ("preference", "food"),
+
+    # ---------- Schedule ----------
+    "when do i wake up": ("schedule", "wake_time"),
+    "when do i sleep": ("schedule", "sleep_time"),
 }
