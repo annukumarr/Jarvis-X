@@ -2,39 +2,39 @@
 brain/memory_filter.py
 
 Purpose:
-Decide whether a sentence is likely to
-contain personal memory.
+Filter sentences that are likely
+to contain personal memory.
 """
 
-MEMORY_KEYWORDS = [
+MEMORY_PATTERNS = [
 
-    "my",
-    "i am",
-    "i'm",
-    "i study",
+    "my name",
+    "my age",
+    "my birthday",
+    "my college",
+    "my university",
     "my dream",
     "my goal",
-    "i want",
-    "favorite",
-    "favourite",
-    "birthday",
-    "age",
-    "college",
-    "university",
-    "language",
-    "food",
-    "wake",
-    "sleep"
+    "my favourite",
+    "my favorite",
+
+    "i am",
+    "i'm",
+
+    "i study",
+
+    "i want to become",
+    "i want to work",
+
+    "remember"
 ]
 
 
 def should_extract_memory(command):
 
-    command = command.lower()
+    command = command.lower().strip()
 
-    for keyword in MEMORY_KEYWORDS:
-
-        if keyword in command:
-            return True
-
-    return False
+    return any(
+        pattern in command
+        for pattern in MEMORY_PATTERNS
+    )
