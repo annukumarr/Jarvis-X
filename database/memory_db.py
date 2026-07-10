@@ -48,7 +48,8 @@ def get_memory(category, key):
 def get_all_memories():
 
     """
-    Returns latest value of every memory.
+    Returns the latest valid memory for each key.
+    Prevents duplicate keys across categories.
     """
 
     conn = get_connection()
@@ -65,18 +66,21 @@ def get_all_memories():
     )
 
     rows = cursor.fetchall()
-
     conn.close()
 
     memories = {}
+    seen_keys = set()
 
     for category, key, value in rows:
+
+        if key in seen_keys:
+            continue
+
+        seen_keys.add(key)
 
         if category not in memories:
             memories[category] = {}
 
-        # Keep only latest value
-        if key not in memories[category]:
-            memories[category][key] = value
+        memories[category][key] = value
 
     return memories

@@ -15,6 +15,9 @@ CORRECTIONS = {
     "im": "i'm",
     "dont": "don't",
     "cant": "can't",
+
+    # Personal correction
+    "anu": "annu",
 }
 
 
