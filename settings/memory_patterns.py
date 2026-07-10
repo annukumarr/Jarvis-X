@@ -56,11 +56,17 @@ RECALL_PATTERNS = {
 
     # ---------- Profile ----------
     "what is my name": ("profile", "name"),
+    "what's my name": ("profile", "name"),
 
     "where do i study": ("profile", "college"),
     "where am i studying": ("profile", "college"),
+
     "what is my college": ("profile", "college"),
+    "what's my college": ("profile", "college"),
+
     "what is my university": ("profile", "college"),
+    "what's my university": ("profile", "college"),
+
     "which university do i study at": ("profile", "college"),
 
     "when is my birthday": ("profile", "birthday"),
@@ -68,18 +74,31 @@ RECALL_PATTERNS = {
 
     # ---------- Goals ----------
     "what is my dream company": ("goal", "dream_company"),
+    "what's my dream company": ("goal", "dream_company"),
+
     "what is my goal": ("goal", "goal"),
+    "what's my goal": ("goal", "goal"),
+
     "what do i want to become": ("goal", "career"),
 
     # ---------- Preferences ----------
     "what is my favorite language": ("preference", "language"),
+    "what's my favorite language": ("preference", "language"),
+
     "what is my favourite language": ("preference", "language"),
+    "what's my favourite language": ("preference", "language"),
 
     "what is my favorite color": ("preference", "color"),
+    "what's my favorite color": ("preference", "color"),
+
     "what is my favourite color": ("preference", "color"),
+    "what's my favourite color": ("preference", "color"),
 
     "what is my favorite food": ("preference", "food"),
+    "what's my favorite food": ("preference", "food"),
+
     "what is my favourite food": ("preference", "food"),
+    "what's my favourite food": ("preference", "food"),
 
     # ---------- Schedule ----------
     "when do i wake up": ("schedule", "wake_time"),

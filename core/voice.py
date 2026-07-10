@@ -1,9 +1,20 @@
+"""
+core/voice.py
+
+Purpose:
+Convert text to speech safely.
+JARVIS should never crash because of TTS.
+"""
+
 import asyncio
-import edge_tts
 import os
+
+import edge_tts
 from playsound import playsound
 
+
 VOICE = "en-US-GuyNeural"
+TEMP_FILE = "temp.mp3"
 
 
 async def generate_voice(text):
@@ -13,16 +24,34 @@ async def generate_voice(text):
         voice=VOICE
     )
 
-    await communicate.save("temp.mp3")
+    await communicate.save(TEMP_FILE)
 
 
 def speak(text):
 
+    text = str(text)
+
     print("Jarvis:", text)
 
-    asyncio.run(generate_voice(str(text)))
+    try:
 
-    playsound("temp.mp3")
+        asyncio.run(generate_voice(text))
 
-    if os.path.exists("temp.mp3"):
-        os.remove("temp.mp3")
+        if os.path.exists(TEMP_FILE):
+
+            playsound(TEMP_FILE)
+
+    except KeyboardInterrupt:
+        print("Voice playback interrupted.")
+
+    except Exception as e:
+        print(f"TTS Error: {e}")
+
+    finally:
+
+        if os.path.exists(TEMP_FILE):
+
+            try:
+                os.remove(TEMP_FILE)
+            except Exception:
+                pass

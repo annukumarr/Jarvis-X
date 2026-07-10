@@ -1,17 +1,54 @@
+"""
+core/speech.py
+
+Purpose:
+Convert speech to text with basic normalization.
+"""
+
 import speech_recognition as sr
+
+
+# Common speech recognition corrections
+CORRECTIONS = {
+    "ise": "is",
+    "whats": "what is",
+    "im": "i'm",
+    "dont": "don't",
+    "cant": "can't",
+}
+
+
+def normalize(command: str) -> str:
+
+    command = command.lower().strip()
+
+    words = command.split()
+
+    corrected = [
+        CORRECTIONS.get(word, word)
+        for word in words
+    ]
+
+    return " ".join(corrected)
 
 
 def listen():
 
     recognizer = sr.Recognizer()
 
-    with sr.Microphone() as source:
+    recognizer.dynamic_energy_threshold = True
+    recognizer.pause_threshold = 0.8
 
-        print("Listening...")
+    try:
 
-        recognizer.adjust_for_ambient_noise(source, duration=1)
+        with sr.Microphone() as source:
 
-        try:
+            print("Listening...")
+
+            recognizer.adjust_for_ambient_noise(
+                source,
+                duration=0.5
+            )
 
             audio = recognizer.listen(
                 source,
@@ -21,9 +58,26 @@ def listen():
 
             command = recognizer.recognize_google(audio)
 
+            command = normalize(command)
+
             print("You:", command)
 
-            return command.lower()
+            return command
 
-        except:
-            return ""
+    except sr.WaitTimeoutError:
+        return ""
+
+    except sr.UnknownValueError:
+        return ""
+
+    except sr.RequestError:
+        print("Speech Recognition API Error")
+        return ""
+
+    except OSError as e:
+        print(f"Microphone Error: {e}")
+        return ""
+
+    except Exception as e:
+        print(f"Speech Error: {e}")
+        return ""

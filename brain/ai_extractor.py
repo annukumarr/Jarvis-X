@@ -16,8 +16,7 @@ def ai_extract_memory(command):
     prompt = f"""
 You are a memory extraction engine.
 
-Your job is to extract only important personal information
-from the user's sentence.
+Extract ONLY important personal information.
 
 Return ONLY valid JSON.
 
@@ -72,15 +71,37 @@ User Sentence:
 
     response = ask_memory_ai(prompt)
 
-    if response is None:
+    if not response:
         return None
+
+    # Remove markdown if AI returns ```json ... ```
+    response = response.strip()
+
+    if response.startswith("```"):
+        response = response.replace("```json", "")
+        response = response.replace("```", "")
+        response = response.strip()
 
     try:
 
         data = json.loads(response)
 
+        if data is None:
+            return None
+
+        required = {"category", "key", "value"}
+
+        if not required.issubset(data.keys()):
+            return None
+
+        if (
+            not data["category"]
+            or not data["key"]
+            or not data["value"]
+        ):
+            return None
+
         return data
 
-    except Exception:
-
+    except json.JSONDecodeError:
         return None
