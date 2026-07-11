@@ -3,7 +3,7 @@ from urllib import response
 from .browser import handle_browser
 from .memory import handle_memory
 from .system import handle_system
-from .desktop import handle_desktop
+from .desktop_router import handle_desktop
 
 
 def execute_command(command):

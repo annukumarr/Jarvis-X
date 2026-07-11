@@ -2,9 +2,7 @@
 brain/ai.py
 
 Purpose:
-Central AI interface for JARVIS-X.
-
-All Gemini requests come through this file.
+Handle AI communication safely.
 """
 
 from google import genai
@@ -13,20 +11,15 @@ from config import GEMINI_API_KEY
 from brain.personality import SYSTEM_PROMPT
 
 
-MODEL_NAME = "gemini-2.5-flash"
-
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 def _generate(prompt):
 
     response = client.models.generate_content(
-        model=MODEL_NAME,
+        model="gemini-2.5-flash",
         contents=prompt
     )
-
-    if not response or not response.text:
-        return None
 
     return response.text.strip()
 
@@ -44,17 +37,45 @@ User:
 """
         )
 
-    except Exception as e:
+    except Exception as error:
 
-        return f"AI Error: {e}"
+        error_message = str(error).lower()
+
+        if (
+            "503" in error_message
+            or "unavailable" in error_message
+            or "high demand" in error_message
+        ):
+            return (
+                "My AI service is temporarily busy, Boss. "
+                "Please try again in a moment."
+            )
+
+        if (
+            "429" in error_message
+            or "resource_exhausted" in error_message
+            or "quota" in error_message
+        ):
+            return (
+                "My AI request limit is temporarily unavailable, Boss. "
+                "Please try again later."
+            )
+
+        print(f"AI Error: {error}")
+
+        return (
+            "I encountered an AI service problem, Boss. "
+            "My local commands are still available."
+        )
 
 
 def ask_memory_ai(prompt):
 
     try:
-
         return _generate(prompt)
 
-    except Exception:
+    except Exception as error:
+
+        print(f"Memory AI Error: {error}")
 
         return None

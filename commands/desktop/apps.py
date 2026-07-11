@@ -1,41 +1,37 @@
 """
-commands/desktop.py
+commands/desktop/apps.py
 
 Purpose:
-Handle desktop automation commands.
+Handle application launching.
 """
 
 import os
 import subprocess
 
 
-def handle_desktop(command):
-        # -------------------------
+def handle_apps(command):
+
+    command = command.lower()
+
+    # Notepad
+    if "open notepad" in command:
+        subprocess.Popen("notepad")
+        return "Opening Notepad, Boss."
+
     # Calculator
-    # -------------------------
     if "open calculator" in command:
-
         subprocess.Popen("calc")
-
         return "Opening Calculator, Boss."
-    
 
-        # -------------------------
     # File Explorer
-    # -------------------------
     if (
         "open explorer" in command
         or "open file explorer" in command
     ):
-
         subprocess.Popen("explorer")
-
         return "Opening File Explorer, Boss."
 
-
-    # -------------------------
-    # Google Chrome
-    # -------------------------
+    # Chrome
     if "open chrome" in command:
 
         try:
@@ -48,10 +44,7 @@ def handle_desktop(command):
 
         return "Opening Google Chrome, Boss."
 
-
-    # -------------------------
     # VS Code
-    # -------------------------
     if (
         "open vscode" in command
         or "open vs code" in command
@@ -69,24 +62,8 @@ def handle_desktop(command):
                 )
 
             except Exception:
-                return "VS Code is not installed or could not be found."
+                return "VS Code is not installed."
 
         return "Opening VS Code, Boss."
-
-
-
-
-
-
-    command = command.lower()
-
-    # -------------------------
-    # Notepad
-    # -------------------------
-    if "open notepad" in command:
-
-        subprocess.Popen("notepad")
-
-        return "Opening Notepad, Boss."
 
     return None
