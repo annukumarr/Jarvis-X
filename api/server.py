@@ -12,6 +12,11 @@ from brain.knowledge import (
     PROJECTS,
 )
 
+from brain.visitor_scope import (
+    is_legacy_related,
+    get_visitor_scope_response,
+)
+
 from brain.intent_router import route_intent
 
 from brain.action_manager import (
@@ -129,7 +134,14 @@ Do NOT call this user "Boss".
 
 Never reveal private owner memory.
 
-Only use public Legacy information and general knowledge.
+Only answer questions that are related to Legacy,
+its projects, technologies, features, work, public
+information, navigation, or JARVIS-X as part of Legacy.
+
+Do NOT answer unrelated general-knowledge questions.
+
+If a visitor asks something outside Legacy scope,
+return the standard Legacy scope response.
 
 If a visitor asks for private owner information,
 politely refuse to provide it.
@@ -710,6 +722,28 @@ USER QUESTION:
             "response": response,
             "source": "ai",
             "role": "owner",
+            "intent": intent,
+            "route": route,
+        }
+
+
+    # ======================================================
+    # VISITOR LEGACY SCOPE GUARD
+    # ======================================================
+    #
+    # Visitor JARVIS-X is strictly limited to Legacy.
+    # Unrelated questions must never reach the AI model.
+    #
+    # Owner mode is intentionally untouched.
+    # ======================================================
+
+    if not owner and not is_legacy_related(message):
+
+        return {
+            "success": True,
+            "response": get_visitor_scope_response(),
+            "source": "scope_guard",
+            "role": "user",
             "intent": intent,
             "route": route,
         }
