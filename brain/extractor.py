@@ -12,28 +12,104 @@ from settings.memory_patterns import SAVE_PATTERNS
 
 
 def extract_memory(command: str):
+    """
+    Extract structured memory using rule-based patterns.
 
-    command = command.lower().strip()
+    Supports natural prefixes such as:
 
-    # Remove optional prefix
-    if command.startswith("remember "):
-        command = command[len("remember "):].strip()
+    remember my target company is Microsoft
+    remember that my target company is Microsoft
+    my target company is Microsoft
 
-    # Rule-based extraction
+    The matching is case-insensitive while the extracted
+    value keeps the user's original capitalization.
+    """
+
+    if not command:
+        return None
+
+    # ======================================================
+    # CLEAN INPUT
+    # ======================================================
+
+    original_command = command.strip()
+
+    normalized_command = (
+        original_command
+        .lower()
+        .strip()
+    )
+
+
+    # ======================================================
+    # REMOVE MEMORY PREFIX
+    # ======================================================
+
+    prefixes = (
+        "remember that ",
+        "remember ",
+    )
+
+    for prefix in prefixes:
+
+        if normalized_command.startswith(prefix):
+
+            original_command = (
+                original_command[
+                    len(prefix):
+                ].strip()
+            )
+
+            normalized_command = (
+                normalized_command[
+                    len(prefix):
+                ].strip()
+            )
+
+            break
+
+
+    # ======================================================
+    # RULE-BASED EXTRACTION
+    # ======================================================
+
     for pattern, (category, key) in SAVE_PATTERNS.items():
 
-        if command.startswith(pattern):
+        pattern_normalized = (
+            pattern
+            .lower()
+            .strip()
+        )
 
-            value = command[len(pattern):].strip()
 
-            # Ignore empty values
+        if normalized_command.startswith(
+            pattern_normalized
+        ):
+
+            value = (
+                original_command[
+                    len(pattern_normalized):
+                ].strip()
+            )
+
+
+            # ==================================================
+            # IGNORE EMPTY VALUES
+            # ==================================================
+
             if not value:
                 return None
+
 
             return {
                 "category": category,
                 "key": key,
-                "value": value
+                "value": value,
             }
+
+
+    # ======================================================
+    # NO LOCAL MATCH
+    # ======================================================
 
     return None

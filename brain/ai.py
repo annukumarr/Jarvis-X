@@ -11,31 +11,41 @@ from config import GEMINI_API_KEY
 from brain.personality import SYSTEM_PROMPT
 
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+# ==========================
+# GEMINI CLIENT
+# ==========================
 
+client = genai.Client(
+    api_key=GEMINI_API_KEY
+)
+
+
+# ==========================
+# AI GENERATION
+# ==========================
 
 def _generate(prompt):
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
+    interaction = client.interactions.create(
+        model="gemini-3.6-flash",
+
+        system_instruction=SYSTEM_PROMPT,
+
+        input=prompt
     )
 
-    return response.text.strip()
+    return interaction.output_text.strip()
 
+
+# ==========================
+# NORMAL AI
+# ==========================
 
 def ask_ai(prompt):
 
     try:
 
-        return _generate(
-            f"""
-{SYSTEM_PROMPT}
-
-User:
-{prompt}
-"""
-        )
+        return _generate(prompt)
 
     except Exception as error:
 
@@ -69,9 +79,14 @@ User:
         )
 
 
+# ==========================
+# MEMORY AI
+# ==========================
+
 def ask_memory_ai(prompt):
 
     try:
+
         return _generate(prompt)
 
     except Exception as error:
@@ -79,3 +94,4 @@ def ask_memory_ai(prompt):
         print(f"Memory AI Error: {error}")
 
         return None
+        

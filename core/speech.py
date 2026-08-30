@@ -2,13 +2,17 @@
 core/speech.py
 
 Purpose:
-Convert speech to text with basic normalization.
+Convert speech to text with robust microphone handling
+and command normalization.
 """
 
 import speech_recognition as sr
 
 
-# Common speech recognition corrections
+# ==========================
+# SPEECH CORRECTIONS
+# ==========================
+
 CORRECTIONS = {
     "ise": "is",
     "whats": "what is",
@@ -20,6 +24,10 @@ CORRECTIONS = {
     "anu": "annu",
 }
 
+
+# ==========================
+# NORMALIZATION
+# ==========================
 
 def normalize(command: str) -> str:
 
@@ -35,12 +43,34 @@ def normalize(command: str) -> str:
     return " ".join(corrected)
 
 
-def listen():
+# ==========================
+# CREATE RECOGNIZER
+# ==========================
+
+def create_recognizer():
 
     recognizer = sr.Recognizer()
 
     recognizer.dynamic_energy_threshold = True
-    recognizer.pause_threshold = 0.8
+
+    recognizer.energy_threshold = 300
+
+    recognizer.pause_threshold = 0.6
+
+    recognizer.phrase_threshold = 0.2
+
+    recognizer.non_speaking_duration = 0.3
+
+    return recognizer
+
+
+# ==========================
+# LISTEN
+# ==========================
+
+def listen():
+
+    recognizer = create_recognizer()
 
     try:
 
@@ -48,39 +78,125 @@ def listen():
 
             print("Listening...")
 
+            # Short calibration for each fresh microphone stream.
             recognizer.adjust_for_ambient_noise(
                 source,
-                duration=0.5
+                duration=0.2
             )
 
             audio = recognizer.listen(
                 source,
                 timeout=5,
-                phrase_time_limit=10
+                phrase_time_limit=8
             )
 
-            command = recognizer.recognize_google(audio)
+        command = recognizer.recognize_google(audio)
 
-            command = normalize(command)
+        command = normalize(command)
 
-            print("You:", command)
+        print("You:", command)
 
-            return command
+        return command
 
     except sr.WaitTimeoutError:
+
         return ""
 
     except sr.UnknownValueError:
+
         return ""
 
     except sr.RequestError:
+
         print("Speech Recognition API Error")
+
         return ""
 
     except OSError as e:
+
         print(f"Microphone Error: {e}")
+
         return ""
 
+    except KeyboardInterrupt:
+
+        print("\nJARVIS stopped by user.")
+
+        return "exit"
+
     except Exception as e:
+
         print(f"Speech Error: {e}")
+
+        return ""
+
+
+# ==========================
+# CONFIRMATION LISTEN
+# ==========================
+
+def listen_confirmation():
+
+    recognizer = create_recognizer()
+
+    # Make short words easier to capture.
+    recognizer.pause_threshold = 0.4
+    recognizer.phrase_threshold = 0.1
+    recognizer.non_speaking_duration = 0.2
+
+    try:
+
+        with sr.Microphone() as source:
+
+            print("Waiting for confirmation...")
+
+            recognizer.adjust_for_ambient_noise(
+                source,
+                duration=0.2
+            )
+
+            audio = recognizer.listen(
+                source,
+                timeout=5,
+                phrase_time_limit=3
+            )
+
+        command = recognizer.recognize_google(audio)
+
+        command = normalize(command)
+
+        print("You:", command)
+
+        return command
+
+    except sr.WaitTimeoutError:
+
+        return ""
+
+    except sr.UnknownValueError:
+
+        return ""
+
+    except sr.RequestError:
+
+        print("Speech Recognition API Error")
+
+        return ""
+
+    except OSError as e:
+
+        print(f"Microphone Error: {e}")
+
+        return ""
+
+    except KeyboardInterrupt:
+
+        print("\nJARVIS stopped by user.")
+
+        return "exit"
+
+    except Exception as e:
+
+        print(f"Speech Error: {e}")
+
         return ""
