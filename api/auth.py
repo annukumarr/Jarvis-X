@@ -191,8 +191,8 @@ def login(
         key=AUTH_COOKIE_NAME,
         value=token,
         httponly=True,
-        secure=False,
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=TOKEN_EXPIRATION_SECONDS,
     )
 
