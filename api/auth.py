@@ -248,8 +248,11 @@ def logout(response: Response):
     """
 
     response.delete_cookie(
-        key=AUTH_COOKIE_NAME,
-    )
+    key=AUTH_COOKIE_NAME,
+    httponly=True,
+    secure=True,
+    samesite="none",
+)
 
     return {
         "success": True,
